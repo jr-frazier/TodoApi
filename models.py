@@ -1,6 +1,10 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+import enum
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Enum
 
+class UserRoles(enum.Enum):
+    ADMIN = "admin"
+    USER = "user"
 
 class Users(Base):
     __tablename__ = 'users'
@@ -12,7 +16,7 @@ class Users(Base):
     last_name = Column(String)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
-    role = Column(String)
+    role = Column(Enum(UserRoles), default=UserRoles.USER)
 
 class Todos(Base):
     # tells SQLAlchemy what table to use
