@@ -36,3 +36,16 @@ async def get_all_users(user: user_dependency, db: db_dependency):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     return db.query(Users).all()
+
+@router.delete("/user/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(user: user_dependency, db: db_dependency, user_id: int = Path(gt=0)):
+    if user is None or user.get('role') != 'admin':
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    user_model = db.query(Users).filter(Users.id == user_id).first()
+    if user_model is None:
+        raise HTTPException(status_code=404, detail="ID Not Found")
+    if user_model.id == user.get('id'):
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+
+    db.delete(user_model)
+    db.commit()
