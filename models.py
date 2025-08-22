@@ -17,6 +17,7 @@ class Users(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     role = Column(Enum(UserRoles), default=UserRoles.USER)
+    phone_number = Column(String)
 
 class Todos(Base):
     # tells SQLAlchemy what table to use

@@ -1,5 +1,5 @@
 from fastapi import  APIRouter
-from typing import Annotated
+from typing import Annotated, Optional
 from fastapi import  Depends, HTTPException, Path
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -26,6 +26,11 @@ class TodoRequest(BaseModel):
     priority: int = Field(gt=0, lt=4)
     complete: bool
 
+class TodoUpdateRequest(TodoRequest):
+    title: Optional[str] = Field(min_length=3, max_length=50, default=None)
+    description: Optional[str] = Field(min_length=3, max_length=200, default=None)
+    priority: Optional[int] = Field(gt=0, lt=4, default=None)
+    complete: Optional[bool] = Field(default=None)
 @router.get("/", status_code=status.HTTP_200_OK)
 async def read_all(user: user_dependency, db: db_dependency):
     if user is None:
@@ -55,7 +60,7 @@ async def create_todo(user: user_dependency, db: db_dependency, todo_request: To
 
 
 @router.put("/todo/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_todo(user: user_dependency, db: db_dependency, todo_request: TodoRequest, todo_id: int = Path(gt=0)):
+async def update_todo(user: user_dependency, db: db_dependency, todo_request: TodoUpdateRequest, todo_id: int = Path(gt=0)):
     if user is None:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -65,10 +70,10 @@ async def update_todo(user: user_dependency, db: db_dependency, todo_request: To
     if todo_model is None:
         raise HTTPException(status_code=404, detail="ID Not Found")
 
-    todo_model.title = todo_request.title
-    todo_model.description = todo_request.description
-    todo_model.priority = todo_request.priority
-    todo_model.complete = todo_request.complete
+    todo_model.title = todo_request.title or todo_model.title
+    todo_model.description = todo_request.description or todo_model.description
+    todo_model.priority = todo_request.priority or todo_model.priority
+    todo_model.complete = todo_request.complete or todo_model.complete
 
     db.add(todo_model)
     db.commit()
