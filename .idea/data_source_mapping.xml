@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/03dfda21-28f3-4b67-8eff-3204937275c5/console.sql" value="03dfda21-28f3-4b67-8eff-3204937275c5" />
     <file url="file://$PROJECT_DIR$/MySQLScript.sql" value="19e54a5b-66a0-4f8c-b65f-c86fccbcd06d" />
   </component>
 </project>
